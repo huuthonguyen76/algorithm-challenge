@@ -4,23 +4,25 @@ from typing import List
 
 class Solution:
     def numTilePossibilities(self, tiles: str) -> int:
-        self.result = set()
-        def recursive(s: str, l_cur_idx: List[int], l_cur_result: List[str]):
-            self.result.add(''.join(l_cur_result))
+        self.result = 0
+        l_tile_record = [0] * 26
+        for tile in tiles:
+            l_tile_record[ord(tile) - 65] += 1
+        
+        def recursive(l_tile_record: List[int]):
+            self.result += 1
 
-            for idx in range(len(s)):
-                if idx in l_cur_idx:
+            for idx in range(len(l_tile_record)):
+                if l_tile_record[idx] <= 0:
                     continue
 
-                l_cur_idx.append(idx)
-                l_cur_result.append(s[idx])
-                recursive(s, l_cur_idx, l_cur_result)
-                l_cur_idx.pop()
-                l_cur_result.pop()
+                l_tile_record[idx] -= 1
+                recursive(l_tile_record[:])
+                l_tile_record[idx] += 1
 
-        recursive(tiles, [], [])
-        self.result.remove('')
-        return len(self.result) 
+        recursive(l_tile_record)
+        
+        return self.result - 1
             
 
-print(Solution().numTilePossibilities("AAB"))
+print(Solution().numTilePossibilities("AAABBC"))
